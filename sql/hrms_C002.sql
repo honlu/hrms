@@ -246,24 +246,6 @@ CREATE TABLE `staff` (
 
 INSERT INTO `staff` VALUES (1,'root','超级管理员',NULL,NULL,'1999-05-21','-1',1,'-1','-1','-1','-1',-1,'-1','-1','-1','-1',-1,'2021-01-02',NULL,NULL,NULL),(2,'admin','系统管理员',NULL,NULL,'1999-05-21','-1',1,'-1','-1','-1','-1',-1,'-1','-1','-1','-1',-1,'2021-01-02',NULL,NULL,NULL),(11,'H14774','彭博荣','H22024','王明','1999-05-21','433334199905215517',1,'汉族','清华大学','机械设计制造及其自动化','本科',5996,'611116161115151515','rank_32826814','dep_1322682358','gdutarong2@161.com',15521306934,'2021-02-24','2021-03-13 14:40:56','2021-04-15 11:00:16',NULL),(17,'H14466','李丽',NULL,NULL,'1999-05-21','433334199905215500',2,'汉族','清华大学','网络工程','博士',5000,'611116161115151515','rank_1110616701','dep_1460851561','gdutarong@163.com',18823042440,'2021-02-24','2021-03-23 10:12:30','2021-04-10 19:05:32',NULL),(18,'H22024','王明','H14466','李丽','1999-05-21','433333199905215517',1,'汉族','清华大学','计算机','本科及以上',4500,'611116161115151515','rank_3404026447','dep_2547022224','gdutarong@163.com',19927454324,'2021-01-02','2021-03-28 18:11:35','2021-04-15 11:03:10',NULL),(26,'H27826','李华','H14774','彭博荣','1997-02-27','433334199905215333',1,'汉族','清华大学','机械自动化','博士',19900,'611116161115151515','rank_3404026447','dep_2547022224','1378789620@qq.com',15521306932,'2021-04-17','2021-04-17 16:55:04','2021-05-27 13:03:12',NULL);
 
-CREATE TABLE `attendance_record` (
-                                     `id` bigint NOT NULL AUTO_INCREMENT,
-                                     `attendance_id` varchar(32) NOT NULL COMMENT '考勤id',
-                                     `staff_id` varchar(32) NOT NULL COMMENT '员工工号',
-                                     `staff_name` varchar(10) NOT NULL COMMENT '员工姓名',
-                                     `date` varchar(32) NOT NULL COMMENT '考勤月份',
-                                     `work_days` int NOT NULL COMMENT '出勤天数',
-                                     `leave_days` int NOT NULL COMMENT '请假天数',
-                                     `overtime_days` int NOT NULL COMMENT '加班天数',
-                                     `approve` int NOT NULL COMMENT '是否已审批, 0为未审批，1为审批通过，2为审批不通过',
-                                     `created_at` datetime DEFAULT NULL,
-                                     `updated_at` datetime DEFAULT NULL,
-                                     `deleted_at` datetime DEFAULT NULL,
-                                     PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
-INSERT INTO `attendance_record` VALUES (3,'attendance_record_2970000723','H14774','彭博荣','2021-03',19,0,1,1,'2021-03-26 10:18:31','2021-04-13 11:45:26',NULL),(4,'attendance_record_2392540979','H22024','王明','2021-03',21,1,2,1,'2021-04-10 19:27:48','2021-04-14 19:25:30',NULL),(5,'attendance_record_2718940777','H14774','彭博荣','2021-04',21,2,2,1,'2021-04-14 12:16:52','2021-04-14 12:17:39',NULL),(6,'attendance_record_263240561','H14774','彭博荣','2021-02',20,2,2,1,'2021-04-14 15:19:23','2021-04-14 16:34:20',NULL),(7,'attendance_record_1858791852','H14774','彭博荣','2021-01',19,0,1,1,'2021-04-14 16:46:45','2021-04-14 16:47:10',NULL),(8,'attendance_record_2442422752','H14774','彭博荣','2021-05',19,2,1,0,'2021-04-16 19:38:13','2021-04-16 19:38:13',NULL);
-
 CREATE TABLE `authority` (
                              `id` bigint NOT NULL AUTO_INCREMENT COMMENT '登陆授权表ID',
                              `authority_id` varchar(32) NOT NULL COMMENT '登陆授权表ID',
