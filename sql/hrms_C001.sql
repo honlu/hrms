@@ -1,6 +1,6 @@
 create database hrms_C001;
 
-use hrms_C001;
+use hrms_C001;  -- 广州公司的数据库
 
 CREATE TABLE `attendance_record` (
                                      `id` bigint NOT NULL AUTO_INCREMENT,
