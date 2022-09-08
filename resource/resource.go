@@ -18,7 +18,7 @@ var DbMapper = make(map[string]*gorm.DB)
 // 默认DB，不作为业务使用
 var DefaultDb *gorm.DB
 
-type Gin struct {
+type Gin struct {  // gin配置信息对应结构体
 	Port int64 `json:"port"`
 }
 
@@ -38,7 +38,7 @@ func HrmsDB(c *gin.Context) *gorm.DB {
 	return nil
 }
 
-type Db struct {
+type Db struct { // db配置信息对应结构体
 	User     string `json:"user"`
 	Password string `json:"password"`
 	Host     string `json:"host"`
@@ -46,7 +46,7 @@ type Db struct {
 	DbName   string `json:"dbNname"`
 }
 
-type Mongo struct {
+type Mongo struct { // mongo配置信息对应结构体
 	IP      string `json:"ip"`
 	Port    int64  `json:"port"`
 	Dataset string `json:"dataset"`
@@ -54,7 +54,7 @@ type Mongo struct {
 
 var MongoClient *qmgo.Client
 
-type Config struct {
+type Config struct {  // 对应整个配置信息，组合三个基本结构体
 	Gin   `json:"gin"`
 	Db    `json:"db"`
 	Mongo `json:"mongo"`

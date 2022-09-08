@@ -19,46 +19,58 @@ import (
 )
 
 func InitConfig() error {
-	config := &resource.Config{}
-	vip := viper.New()
-	vip.AddConfigPath("./config")
-	vip.SetConfigType("yaml")
+	config := &resource.Config{}  // 创建一个配置结构体
+	vip := viper.New()  // 创建一个新的viper实例
+	vip.AddConfigPath("./config")  // 查找添加配置文件所在的路径
+	vip.SetConfigType("yaml") // 设置配置文件的类型。如果配置文件的名称中没有扩展名，则需要配置此项
 	// 环境判断
-	env := os.Getenv("HRMS_ENV")
+	env := os.Getenv("HRMS_ENV") // 获取环境变量的值
 	if env == "" || env == "dev" {
 		// 开发环境
-		vip.SetConfigName("config-dev")
+		vip.SetConfigName("config-dev") // 配置文件名称（此处没有扩展名）
 	}
 	if env == "prod" {
 		// 生产环境
 		vip.SetConfigName("config-prod")
 	}
-	err := vip.ReadInConfig()
+	err := vip.ReadInConfig() // 查找并读取配置文件
 	if err != nil {
 		log.Printf("[config.Init] err = %v", err)
 		return err
 	}
-	if err := vip.Unmarshal(config); err != nil {
+	if err := vip.Unmarshal(config); err != nil {  // 反序列化，即将其他格式数据对象转为go基本类型组成的对象
 		log.Printf("[config.Init] err = %v", err)
 		return err
 	}
 	log.Printf("[config.Init] 初始化配置成功,config=%v", config)
-	resource.HrmsConf = config
+	resource.HrmsConf = config  // 全局配置变量完成填写
 	return nil
 }
 
 func InitGin() error {
-	server := gin.Default()
+	server := gin.Default() // 初始化一个Engine实例，除了调用gin.New()得到Engine实例后，还调用Logger()，Recover()日志和处理主进程的panic返回http code500或断开的中间件
 	// 静态资源及模板配置
 	htmlInit(server)
 	// 初始化路由
 	routerInit(server)
-	err := server.Run(fmt.Sprintf(":%v", resource.HrmsConf.Gin.Port))
+	err := server.Run(fmt.Sprintf(":%v", resource.HrmsConf.Gin.Port))  // 监听并在Port上启动服务
 	if err != nil {
 		log.Printf("[InitGin] err = %v", err)
 	}
 	log.Printf("[InitGin] success")
 	return err
+}
+
+func htmlInit(server *gin.Engine) {
+	// 静态资源-静态文件处理
+	server.StaticFS("/static", http.Dir("./static")) // 加载静态文件
+	server.StaticFS("/views", http.Dir("./views"))
+	// HTML模板加载
+	server.LoadHTMLGlob("views/*")
+	// 404页面
+	server.NoRoute(func(c *gin.Context) {
+		c.HTML(404, "404.html", nil)
+	})
 }
 
 func routerInit(server *gin.Engine) {
@@ -170,23 +182,11 @@ func routerInit(server *gin.Engine) {
 	exampleScoreGroup.GET("/query_by_staff_id/:staff_id", handler.GetExampleHistoryByStafId)
 }
 
-func htmlInit(server *gin.Engine) {
-	// 静态资源
-	server.StaticFS("/static", http.Dir("./static"))
-	server.StaticFS("/views", http.Dir("./views"))
-	// HTML模板加载
-	server.LoadHTMLGlob("views/*")
-	// 404页面
-	server.NoRoute(func(c *gin.Context) {
-		c.HTML(404, "404.html", nil)
-	})
-}
-
 func InitGorm() error {
 	// "user:pass@tcp(127.0.0.1:3306)/dbname?charset=utf8mb4&parseTime=True&loc=Local"
 	// 对每个分公司数据库进行连接
 	dbNames := resource.HrmsConf.Db.DbName
-	dbNameList := strings.Split(dbNames, ",")
+	dbNameList := strings.Split(dbNames, ",")  // 划分读取多个数据库
 	for index, dbName := range dbNameList {
 		dsn := fmt.Sprintf(
 			"%v:%v@tcp(%v:%v)/%v?charset=utf8mb4&parseTime=True&loc=Local",
@@ -209,7 +209,7 @@ func InitGorm() error {
 			return err
 		}
 		// 添加到映射表中
-		resource.DbMapper[dbName] = db
+		resource.DbMapper[dbName] = db   // 键：数据库名，值：分公司数据库的表等
 		// 第一个是默认DB，用以启动程序选择分公司
 		if index == 0 {
 			resource.DefaultDb = db
@@ -221,8 +221,8 @@ func InitGorm() error {
 	return nil
 }
 
-func InitMongo() error {
-	mongo := resource.HrmsConf.Mongo
+func InitMongo() error { // 暂时没用到
+	mongo := resource.HrmsConf.Mongo  // 读取Mongo的结构体信息
 	var err error
 	resource.MongoClient, err = qmgo.NewClient(context.Background(), &qmgo.Config{
 		Uri:      fmt.Sprintf("mongodb://%v:%v", mongo.IP, mongo.Port),
@@ -235,15 +235,19 @@ func InitMongo() error {
 }
 
 func main() {
+	// 初始化配置
 	if err := InitConfig(); err != nil {
 		panic(err)
 	}
+	// 初始化数据库
 	if err := InitGorm(); err != nil {
 		panic(err)
 	}
+	// 加载静态文件，初始化Gin路由
 	if err := InitGin(); err != nil {
 		panic(err)
 	}
+	// 初始化Mongo，暂时没用到
 	if err := InitMongo(); err != nil {
 		panic(err)
 	}
